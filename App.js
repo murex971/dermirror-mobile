@@ -17,11 +17,28 @@ import {
   Button,
 } from 'react-native';
 
-import app from '@react-native-firebase/app';
-import database from '@react-native-firebase/database';
+import * as firebase from 'firebase';
+
+// import "firebase/database";
+
+const firebaseConfig = {
+  apiKey: 'api-key',
+  authDomain: 'project-id.firebaseapp.com',
+  databaseURL: 'https://project-id.firebaseio.com',
+  projectId: 'project-id',
+  storageBucket: 'project-id.appspot.com',
+  messagingSenderId: 'sender-id',
+  appId: 'app-id',
+  measurementId: 'G-measurement-id',
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// import app from '@react-native-firebase/app';
+// import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// const db = app.database();
+const db = firebase.database();
 
 const App = () => {
   const [pairingKey, setPairingKey] = useState('');
