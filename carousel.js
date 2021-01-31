@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 
+var image;
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
@@ -45,8 +46,7 @@ const slideList = Array.from({ length: 5}).map((_, i) => {
     id: i,
     image: `https://picsum.photos/1440/2842?random=${i}`,
     title: `DESCRIPTION`,
-    subtitle: ` Rosacea (say "roh-ZAY-sha") is a skin disease that causes redness and pimples on your nose, cheeks, chin, and forehead. The redness may come and go. People sometimes call rosacea "adult acne" because it can cause outbreaks that look like acne. It can also cause burning and soreness in the eyes and eyelids.
-`,
+    subtitle: ` Rosacea (say "roh-ZAY-sha") is a skin disease that causes redness and pimples on your nose, cheeks, chin, and forehead. The redness may come and go. People sometimes call rosacea "adult acne" because it can cause outbreaks that look like acne. It can also cause burning and soreness in the eyes and eyelids.`,
   };
 });
 
@@ -64,6 +64,7 @@ function Pagination({ index }) {
   return (
     <View style={styles.pagination} pointerEvents="none">
       {slideList.map((_, i) => {
+        console.log(i)
         return (
           <View
             key={i}
@@ -80,7 +81,8 @@ function Pagination({ index }) {
   );
 }
 
-export default function Carousel() {
+export default function Carousel({p}) {
+  console.log(p)
   const [index, setIndex] = useState(0);
   const indexRef = useRef(index);
   indexRef.current = index;

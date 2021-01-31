@@ -15,22 +15,23 @@ import {
   Text,
   TextInput,
   Button,
+  Image
 } from 'react-native';
 
+import Carousel from './carousel';
 import * as firebase from 'firebase';
 
 // import "firebase/database";
 
-const firebaseConfig = {
-  apiKey: 'api-key',
-  authDomain: 'project-id.firebaseapp.com',
-  databaseURL: 'https://project-id.firebaseio.com',
-  projectId: 'project-id',
-  storageBucket: 'project-id.appspot.com',
-  messagingSenderId: 'sender-id',
-  appId: 'app-id',
-  measurementId: 'G-measurement-id',
-};
+var firebaseConfig = {
+    apiKey: "AIzaSyBqDu0H6tyyyHRr0jzYRxosgL5s8gP-SVs",
+    authDomain: "dermirror-d1d82.firebaseapp.com",
+    databaseURL: "https://dermirror-d1d82-default-rtdb.firebaseio.com",
+    projectId: "dermirror-d1d82",
+    storageBucket: "dermirror-d1d82.appspot.com",
+    messagingSenderId: "545961868830",
+    appId: "1:545961868830:web:5ddb5cdc12f4461cffb80f"
+  };
 
 firebase.initializeApp(firebaseConfig);
 
@@ -45,7 +46,9 @@ const App = () => {
   const [tempKey, setTempKey] = useState('');
   const [prescriptions, setPrescriptions] = useState([]);
   useEffect(() => {
+  
     AsyncStorage.getItem('@storage_Key').then((value) => {
+      console.log(value)
       if (value !== null) {
         setPairingKey(value);
         db.ref(value)
@@ -58,6 +61,9 @@ const App = () => {
       }
     });
   }, []);
+
+
+
   return (
     <>
       <SafeAreaView style={{height: '100%'}}>
@@ -110,11 +116,13 @@ const App = () => {
                   onPress={() => {
                     AsyncStorage.setItem('@storage_Key', tempKey);
                     setPairingKey(tempKey);
+                    console.log(tempKey)
                     db.ref(tempKey)
                       .once('value')
                       .then((snapshot) => {
                         var obj = snapshot.val();
                         setPrescriptions(Object.values(obj));
+                        console.log(prescriptions)
                       });
                   }}></Button>
               </View>
@@ -123,25 +131,62 @@ const App = () => {
           {pairingKey !== '' && (
             <>
               {prescriptions.map((p, i) => (
-                <View
-                  key={`${p.date}`}
-                  style={{
-                    borderWidth: 1,
-                    width: '100%',
-                    backgroundColor: 'white',
-                    padding: 10,
-                    marginBottom: 15,
-                  }}>
-                  <Text>Diagnosis: {p.diagnosis}</Text>
-                  <Text>
-                    Date: {new Date(p.date).toUTCString().split(',')[1].trim()}
-                  </Text>
-                  <Text>Medication: {p.medication}</Text>
-                  <Text>Remarks: {p.remarks}</Text>
-                </View>
+                <Carousel key={`${p.date}`}style={{
+                  height:100,
+                }
+              } data={p}></Carousel>
+                // <View
+                // key={`${p.date}`}
+                // style={{
+                //   padding:10,
+                //   flex:1,
+                //   flexDirection:"row",
+                //   width:"100%",
+                //   overflow: "scroll"
+                // }}
+                // >
+                //   <View
+                //     key={`${p.date}`}
+                //     style={{
+                //       borderWidth: 1,
+                //       width: '70%',
+                //       backgroundColor: 'white',
+                //       padding: 10,
+                //       marginBottom: 15,
+                //     }}>
+                //       <Text>Diagnosis: {p.diagnosis}</Text>
+                //       <Text>
+                //         Date: {new Date(p.date).toUTCString().split(',')[1].trim()}
+                //       </Text>
+                //       <Text>Medication: {p.medication}</Text>
+                //       <Text>Remarks: {p.remarks}</Text>
+                //       <Text>Image: {p.image}</Text>
+                //   </View>
+                //   <View style={{
+                //      borderWidth: 1,
+                //      width: '30%',
+                //      backgroundColor: 'white',
+                //      padding: 10,
+                //      marginBottom: 15,
+                //   }}>
+                //     <Image 
+                //     style={{
+                      
+                //       height:"100%",
+                //       padding: 10,
+                //       marginBottom:15,
+                //       borderWidth:1,
+                //       backgroundColor: 'white',
+                //     }}
+                //     source={{
+                //       uri: `${p.bimage}`,
+                //     }}/>
+                //   </View>
+                // </View>
               ))}
             </>
           )}
+          
         </ScrollView>
         {pairingKey !== '' && (
           <>
