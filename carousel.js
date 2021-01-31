@@ -41,21 +41,42 @@ const styles = StyleSheet.create({
   carousel: { flex: 1 },
 });
 
-const slideList = Array.from({ length: 5}).map((_, i) => {
-  return {
-    id: i,
-    image: `https://picsum.photos/1440/2842?random=${i}`,
-    title: `DESCRIPTION`,
-    subtitle: ` Rosacea (say "roh-ZAY-sha") is a skin disease that causes redness and pimples on your nose, cheeks, chin, and forehead. The redness may come and go. People sometimes call rosacea "adult acne" because it can cause outbreaks that look like acne. It can also cause burning and soreness in the eyes and eyelids.`,
-  };
-});
+
+const slideList = [{
+  id:1,
+  image:`https://picsum.photos/1440/2842?random=1`,
+  title:`Acne`,
+  description:`Rosacea (say "roh-ZAY-sha") is a skin disease that causes redness and pimples on your nose, cheeks, chin, and forehead. The redness may come and go. People sometimes call rosacea "adult acne" because it can cause outbreaks that look like acne. It can also cause burning and soreness in the eyes and eyelids.
+  `,
+  causes: `For acne-like breakouts, your immune system seems to overreact to a bacteria called Bacillus oleronius. A type of bacteria called H. pylori and a common mite called demodex are linked to rosacea.
+  `,
+  symptoms:`Development of dry, red, inflamed patches of skin; pustules and papules
+  `,
+  cure:`Brimonidine (Mirvaso) and oxymetazoline (Rhofade) cut down redness for about 12 hours by shrinking your blood vessels. Azelaic acid and metronidazole can help with redness and bumps, but they take 3 to 6 weeks to work.
+  `,
+  prevention: `Everyone is different, but some common triggers are a cold wind that blows on your face or eating spicy foods. Others might include sunlight, stress, red wine, drugs, and exercise.
+  `
+}]
+
+// const slideList = Array.from({ length: 5}).map((_, i) => {
+//   return {
+//     id: i,
+//     image: `https://picsum.photos/1440/2842?random=${i}`,
+//     title: `DESCRIPTION`,
+//     subtitle: ` Rosacea (say "roh-ZAY-sha") is a skin disease that causes redness and pimples on your nose, cheeks, chin, and forehead. The redness may come and go. People sometimes call rosacea "adult acne" because it can cause outbreaks that look like acne. It can also cause burning and soreness in the eyes and eyelids.`,
+//   };
+// });
 
 const Slide = memo(function Slide({ data }) {
   return (
     <View style={styles.slide}>
       <Image source={{ uri: data.image }} style={styles.slideImage}></Image>
       <Text style={styles.slideTitle}>{data.title}</Text>
-      <Text style={styles.slideSubtitle}>{data.subtitle}</Text>
+      <Text style={styles.slideSubtitle}>{data.description}</Text>
+      <Text style={styles.slideSubtitle}>{data.causes}</Text>
+      <Text style={styles.slideSubtitle}>{data.symptoms}</Text>
+      <Text style={styles.slideSubtitle}>{data.cure}</Text>
+      <Text style={styles.slideSubtitle}>{data.prevention}</Text>
     </View>
   );
 });
