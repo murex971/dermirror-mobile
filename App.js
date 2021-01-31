@@ -5,6 +5,9 @@
  * @format
  * @flow strict-local
  */
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import React, {useEffect, useState} from 'react';
 import {
@@ -15,7 +18,8 @@ import {
   Text,
   TextInput,
   Button,
-  Image
+  Image,
+  BackgroundImage
 } from 'react-native';
 
 import Carousel from './carousel';
@@ -24,6 +28,9 @@ import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 // import "firebase/database";
+
+const Stack = createStackNavigator();
+
 
 var firebaseConfig = {
     apiKey: "AIzaSyBqDu0H6tyyyHRr0jzYRxosgL5s8gP-SVs",
@@ -75,7 +82,7 @@ const PrescriptionComp = (props) => {
                 <Text>Remarks: {p.remarks}</Text>
               </Card.Content>
               <Card.Actions>
-                <Button title="More Details">Ok</Button>
+                <Button title="More Details" >Ok</Button>
               </Card.Actions>
             </Card>
             {/* <View
@@ -128,6 +135,11 @@ const App = () => {
   const [tempKey, setTempKey] = useState('');
   const [prescriptions, setPrescriptions] = useState([]);
   const [detailView, setDetailView] = useState(false);
+
+  function detail() {
+    setDetailView(true)
+  }
+
   useEffect(() => {
   
     AsyncStorage.getItem('@storage_Key').then((value) => {
@@ -152,11 +164,12 @@ const App = () => {
       <SafeAreaView style={{height: '100%'}}>
         <View
           style={{
-            backgroundImage: "url(./assets/dermirror-back.jpeg)",
+            // backgroundImage: "url(./assets/dermirror-back.jpeg)",
             padding: 100,
             textAlign: 'center',
             alignItems: 'center',
           }}>
+          {/* <BackgroundImage source={{ uri: 'assets/dermirro-back.jpeg' }} style={{ width: 40, height: 40 }}>   */}
           <Text
             style={{
               fontSize: 28,
@@ -166,12 +179,15 @@ const App = () => {
             }}>
             Dermirror
           </Text>
+          {/* </BackgroundImage> */}
         </View>
+        <NavigationContainer>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           contentContainerStyle={{alignItems: 'center'}}
           style={styles.scrollView}>
           {pairingKey === '' ? (
+            
             <>
               <Text style={{fontSize: 18, fontStyle: 'italic'}}>
                 Enter Pairing key
@@ -223,12 +239,13 @@ const App = () => {
               </>
             ) : (
               <>
-              <PrescriptionComp data={prescriptions}></PrescriptionComp>
+              <PrescriptionComp data={prescriptions} fun={detail}></PrescriptionComp>
               </>
             )}
             </>
           )}
         </ScrollView>
+        </NavigationContainer>
         {pairingKey !== '' && (
           <>
             <Button
