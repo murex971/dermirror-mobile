@@ -41,10 +41,71 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const db = firebase.database();
 
+
+const PrescriptionComp = (props) => {
+  return (
+    props.data.map((p, i) => (
+      <div className="prescription-container">
+        <View
+          key={`${p.date}`}
+          style={{
+            padding:10,
+            flex:1,
+            flexDirection:"row",
+            width:"100%",
+            overflow: "scroll"
+          }}
+          >
+            <View
+              key={`${p.date}`}
+              style={{
+                borderWidth: 1,
+                width: '70%',
+                backgroundColor: 'white',
+                padding: 10,
+                marginBottom: 15,
+              }}>
+                <Text>Diagnosis: {p.diagnosis}</Text>
+                <Text>
+                  Date: {new Date(p.date).toUTCString().split(',')[1].trim()}
+                </Text>
+                <Text>Medication: {p.medication}</Text>
+                <Text>Remarks: {p.remarks}</Text>
+                <Text>Image: {p.image}</Text>
+            </View>
+            <View style={{
+              borderWidth: 1,
+              width: '30%',
+              backgroundColor: 'white',
+              padding: 10,
+              marginBottom: 15,
+            }}>
+              <Image 
+              style={{
+                
+                height:"100%",
+                padding: 10,
+                marginBottom:15,
+                borderWidth:1,
+                backgroundColor: 'white',
+              }}
+              source={{
+                uri: `${p.bimage}`,
+              }}/>
+            </View>
+          </View>
+        <Button title="More Details">More details</Button>
+      </div>
+      ))
+  )
+}
+
+
 const App = () => {
   const [pairingKey, setPairingKey] = useState('');
   const [tempKey, setTempKey] = useState('');
   const [prescriptions, setPrescriptions] = useState([]);
+  const [detailView, setDetailView] = useState(false);
   useEffect(() => {
   
     AsyncStorage.getItem('@storage_Key').then((value) => {
@@ -88,7 +149,7 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           contentContainerStyle={{alignItems: 'center'}}
           style={styles.scrollView}>
-          {pairingKey == '' && (
+          {pairingKey === '' ? (
             <>
               <Text style={{fontSize: 18, fontStyle: 'italic'}}>
                 Enter Pairing key
@@ -127,66 +188,24 @@ const App = () => {
                   }}></Button>
               </View>
             </>
-          )}
-          {pairingKey !== '' && (
+          ) : (
             <>
+            {detailView === true ? (
+              <>
               {prescriptions.map((p, i) => (
-                <Carousel key={`${p.date}`}style={{
+                <Carousel key={`${p.date}`} style={{
                   height:100,
-                }
-              } data={p}></Carousel>
-                // <View
-                // key={`${p.date}`}
-                // style={{
-                //   padding:10,
-                //   flex:1,
-                //   flexDirection:"row",
-                //   width:"100%",
-                //   overflow: "scroll"
-                // }}
-                // >
-                //   <View
-                //     key={`${p.date}`}
-                //     style={{
-                //       borderWidth: 1,
-                //       width: '70%',
-                //       backgroundColor: 'white',
-                //       padding: 10,
-                //       marginBottom: 15,
-                //     }}>
-                //       <Text>Diagnosis: {p.diagnosis}</Text>
-                //       <Text>
-                //         Date: {new Date(p.date).toUTCString().split(',')[1].trim()}
-                //       </Text>
-                //       <Text>Medication: {p.medication}</Text>
-                //       <Text>Remarks: {p.remarks}</Text>
-                //       <Text>Image: {p.image}</Text>
-                //   </View>
-                //   <View style={{
-                //      borderWidth: 1,
-                //      width: '30%',
-                //      backgroundColor: 'white',
-                //      padding: 10,
-                //      marginBottom: 15,
-                //   }}>
-                //     <Image 
-                //     style={{
-                      
-                //       height:"100%",
-                //       padding: 10,
-                //       marginBottom:15,
-                //       borderWidth:1,
-                //       backgroundColor: 'white',
-                //     }}
-                //     source={{
-                //       uri: `${p.bimage}`,
-                //     }}/>
-                //   </View>
-                // </View>
+                  }
+                } data={p}></Carousel>
               ))}
+              </>
+            ) : (
+              <>
+              <PrescriptionComp data={prescriptions}></PrescriptionComp>
+              </>
+            )}
             </>
           )}
-          
         </ScrollView>
         {pairingKey !== '' && (
           <>

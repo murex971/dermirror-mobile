@@ -1,0 +1,4 @@
+.prescription-container {
+    display: flex;
+    flex-direction: column;
+}
