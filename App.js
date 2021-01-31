@@ -20,7 +20,9 @@ import {
 
 import Carousel from './carousel';
 import * as firebase from 'firebase';
+import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 
+const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 // import "firebase/database";
 
 var firebaseConfig = {
@@ -56,7 +58,27 @@ const PrescriptionComp = (props) => {
             overflow: "scroll"
           }}
           >
-            <View
+            <Card key={`${p.date}`} style={{
+              padding: 10,
+            }}>
+              <Card.Title title="Prescription" subtitle="Nupur Agarwal" />
+              <Card.Content style={{
+                paddingBottom: 10
+              }}>
+                <Card.Cover source={{ uri: `${p.bimage}` }} />
+                {/* <Title>Card title</Title> */}
+                <Text>Diagnosis: {p.diagnosis}</Text>
+                <Text>
+                  Date: {new Date(p.date).toUTCString().split(',')[1].trim()}
+                </Text>
+                <Text>Medication: {p.medication}</Text>
+                <Text>Remarks: {p.remarks}</Text>
+              </Card.Content>
+              <Card.Actions>
+                <Button title="More Details">Ok</Button>
+              </Card.Actions>
+            </Card>
+            {/* <View
               key={`${p.date}`}
               style={{
                 borderWidth: 1,
@@ -72,8 +94,8 @@ const PrescriptionComp = (props) => {
                 <Text>Medication: {p.medication}</Text>
                 <Text>Remarks: {p.remarks}</Text>
                 <Text>Image: {p.image}</Text>
-            </View>
-            <View style={{
+            </View> */}
+            {/* <View style={{
               borderWidth: 1,
               width: '30%',
               backgroundColor: 'white',
@@ -92,9 +114,9 @@ const PrescriptionComp = (props) => {
               source={{
                 uri: `${p.bimage}`,
               }}/>
-            </View>
+            </View> */}
           </View>
-        <Button title="More Details">More details</Button>
+        {/* <Button title="More Details">More details</Button> */}
       </div>
       ))
   )
@@ -130,7 +152,7 @@ const App = () => {
       <SafeAreaView style={{height: '100%'}}>
         <View
           style={{
-            backgroundColor: '#f6bd60',
+            backgroundImage: "url(./assets/dermirror-back.jpeg)",
             padding: 100,
             textAlign: 'center',
             alignItems: 'center',
