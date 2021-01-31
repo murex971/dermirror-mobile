@@ -5,6 +5,9 @@
  * @format
  * @flow strict-local
  */
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import React, {useEffect, useState} from 'react';
 import {
@@ -15,7 +18,8 @@ import {
   Text,
   TextInput,
   Button,
-  Image
+  Image,
+  BackgroundImage
 } from 'react-native';
 
 import Carousel from './carousel';
@@ -25,17 +29,20 @@ import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 // import "firebase/database";
 
-var firebaseConfig = {
-    apiKey: "AIzaSyBqDu0H6tyyyHRr0jzYRxosgL5s8gP-SVs",
-    authDomain: "dermirror-d1d82.firebaseapp.com",
-    databaseURL: "https://dermirror-d1d82-default-rtdb.firebaseio.com",
-    projectId: "dermirror-d1d82",
-    storageBucket: "dermirror-d1d82.appspot.com",
-    messagingSenderId: "545961868830",
-    appId: "1:545961868830:web:5ddb5cdc12f4461cffb80f"
-  };
+const Stack = createStackNavigator();
 
-firebase.initializeApp(firebaseConfig);
+
+
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBqDu0H6tyyyHRr0jzYRxosgL5s8gP-SVs",
+  authDomain: "dermirror-d1d82.firebaseapp.com",
+  databaseURL: "https://dermirror-d1d82-default-rtdb.firebaseio.com",
+  projectId: "dermirror-d1d82",
+  storageBucket: "dermirror-d1d82.appspot.com",
+  messagingSenderId: "545961868830",
+  appId: "1:545961868830:web:5ddb5cdc12f4461cffb80f"
+});
 
 // import app from '@react-native-firebase/app';
 // import database from '@react-native-firebase/database';
@@ -45,9 +52,125 @@ const db = firebase.database();
 
 
 const PrescriptionComp = (props) => {
+
+  function changeScreen(){
+    props.detail(true)
+  }
+
+}
+
+
+const App = () => {
+  const [pairingKey, setPairingKey] = useState('');
+  const [tempKey, setTempKey] = useState('');
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [detailView, setDetailView] = useState(false);
+
+  function detail() {
+    setDetailView(true)
+  }
+
+  useEffect(() => {
+  
+    AsyncStorage.getItem('@storage_Key').then((value) => {
+      console.log(value)
+      if (value !== null) {
+        setPairingKey(value);
+        db.ref(value)
+          .once('value')
+          .then((snapshot) => {
+            var obj = snapshot.val();
+            setPrescriptions(Object.values(obj));
+            console.log(Object.values(obj));
+          });
+      }
+    });
+  }, []);
+
+
+
   return (
-    props.data.map((p, i) => (
-      <div className="prescription-container">
+    <>
+      <SafeAreaView style={{height: '100%'}}>
+        <View
+
+          style={{
+            backgroundImage: "https://drive.google.com/file/d/1rzd4Q5RqxCcKhgT_XOBmGhC3r1kpy84P/view?usp=sharing",
+            padding: 100,
+            textAlign: 'center',
+            alignItems: 'center',
+          }}>
+          {/* <BackgroundImage source={{ uri: 'assets/dermirro-back.jpeg' }} style={{ width: 40, height: 40 }}>   */}
+          <Text
+            style={{
+              fontSize: 28,
+              fontStyle: 'italic',
+              fontWeight: 'bold',
+              color: '#555555',
+            }}>
+            Dermirror
+          </Text>
+          {/* </BackgroundImage> */}
+        </View>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={{alignItems: 'center'}}
+          style={styles.scrollView}>
+          {pairingKey === '' ? (
+            
+            <>
+              <Text style={{fontSize: 18, fontStyle: 'italic'}}>
+                Enter Pairing key
+              </Text>
+              <TextInput
+                maxLength={5}
+                keyboardType="number-pad"
+                value={tempKey}
+                onChangeText={(text) => {
+                  setTempKey(text);
+                }}
+                style={{
+                  fontSize: 18,
+                  width: 110,
+                  letterSpacing: 10,
+                  backgroundColor: '#ededed',
+                  marginTop: 10,
+                  borderWidth: 3,
+                }}></TextInput>
+
+              <View style={{padding: 10}}>
+                <Button
+                  title="Set"
+                  color="#f6bd60"
+                  onPress={() => {
+                    AsyncStorage.setItem('@storage_Key', tempKey);
+                    setPairingKey(tempKey);
+                    console.log(tempKey)
+                    db.ref(tempKey)
+                      .once('value')
+                      .then((snapshot) => {
+                        var obj = snapshot.val();
+                        setPrescriptions(Object.values(obj));
+                        // console.log(prescriptions)
+                      });
+                  }}></Button>
+              </View>
+            </>
+          ) : (
+            <>
+            {detailView === true ? (
+              <>
+              {prescriptions.map((p, i) => (
+                <Carousel function={detail}key={`${p.date}`} style={{
+                  height:100,
+                  }
+                } data={p}></Carousel>
+              ))}
+              </>
+            ) : (
+              <>
+              {prescriptions.map((p, i) => (
+      <>
         <View
           key={`${p.date}`}
           style={{
@@ -75,7 +198,7 @@ const PrescriptionComp = (props) => {
                 <Text>Remarks: {p.remarks}</Text>
               </Card.Content>
               <Card.Actions>
-                <Button title="More Details">Ok</Button>
+                <Button title="More Details" onPress={detail}>Ok</Button>
               </Card.Actions>
             </Card>
             {/* <View
@@ -117,113 +240,8 @@ const PrescriptionComp = (props) => {
             </View> */}
           </View>
         {/* <Button title="More Details">More details</Button> */}
-      </div>
-      ))
-  )
-}
-
-
-const App = () => {
-  const [pairingKey, setPairingKey] = useState('');
-  const [tempKey, setTempKey] = useState('');
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [detailView, setDetailView] = useState(false);
-  useEffect(() => {
-  
-    AsyncStorage.getItem('@storage_Key').then((value) => {
-      console.log(value)
-      if (value !== null) {
-        setPairingKey(value);
-        db.ref(value)
-          .once('value')
-          .then((snapshot) => {
-            var obj = snapshot.val();
-            setPrescriptions(Object.values(obj));
-            console.log(Object.values(obj));
-          });
-      }
-    });
-  }, []);
-
-
-
-  return (
-    <>
-      <SafeAreaView style={{height: '100%'}}>
-        <View
-          style={{
-            backgroundImage: "url(./assets/dermirror-back.jpeg)",
-            padding: 100,
-            textAlign: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 28,
-              fontStyle: 'italic',
-              fontWeight: 'bold',
-              color: '#555555',
-            }}>
-            Dermirror
-          </Text>
-        </View>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={{alignItems: 'center'}}
-          style={styles.scrollView}>
-          {pairingKey === '' ? (
-            <>
-              <Text style={{fontSize: 18, fontStyle: 'italic'}}>
-                Enter Pairing key
-              </Text>
-              <TextInput
-                maxLength={5}
-                keyboardType="number-pad"
-                value={tempKey}
-                onChangeText={(text) => {
-                  setTempKey(text);
-                }}
-                style={{
-                  fontSize: 18,
-                  width: 110,
-                  letterSpacing: 10,
-                  backgroundColor: '#ededed',
-                  marginTop: 10,
-                  borderWidth: 3,
-                }}></TextInput>
-
-              <View style={{padding: 10}}>
-                <Button
-                  title="Set"
-                  color="#f6bd60"
-                  onPress={() => {
-                    AsyncStorage.setItem('@storage_Key', tempKey);
-                    setPairingKey(tempKey);
-                    console.log(tempKey)
-                    db.ref(tempKey)
-                      .once('value')
-                      .then((snapshot) => {
-                        var obj = snapshot.val();
-                        setPrescriptions(Object.values(obj));
-                        console.log(prescriptions)
-                      });
-                  }}></Button>
-              </View>
-            </>
-          ) : (
-            <>
-            {detailView === true ? (
-              <>
-              {prescriptions.map((p, i) => (
-                <Carousel key={`${p.date}`} style={{
-                  height:100,
-                  }
-                } data={p}></Carousel>
-              ))}
-              </>
-            ) : (
-              <>
-              <PrescriptionComp data={prescriptions}></PrescriptionComp>
+      </>
+      ))}
               </>
             )}
             </>
